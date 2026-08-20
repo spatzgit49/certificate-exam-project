@@ -56,13 +56,22 @@ export default function Home() {
   function togglePlay() {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) void video.play(); else video.pause();
+    if (video.paused) {
+      void video.play().catch(() => setIsPlaying(false));
+    } else {
+      video.pause();
+    }
   }
 
   function playSelection() {
     const video = videoRef.current;
     if (!video || trimEnd <= trimStart) return;
-    video.currentTime = trimStart; setPreviewing(true); void video.play();
+    video.currentTime = trimStart;
+    setPreviewing(true);
+    void video.play().catch(() => {
+      setIsPlaying(false);
+      setPreviewing(false);
+    });
   }
 
   function updateTime() {
